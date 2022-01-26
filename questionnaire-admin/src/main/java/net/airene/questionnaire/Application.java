@@ -29,7 +29,7 @@ public class Application implements WebMvcConfigurer {
 
     @Bean
     public void initVelocity() {
-        Properties p = new Properties();
+/*        Properties p = new Properties();
         try {
             // 加载classpath目录下的vm文件
             p.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -40,7 +40,7 @@ public class Application implements WebMvcConfigurer {
             Velocity.init(p);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
 }

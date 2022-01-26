@@ -1,3 +1,4 @@
+/*
 package net.airene.questionnaire.api.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -68,3 +69,4 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
 }
+*/
