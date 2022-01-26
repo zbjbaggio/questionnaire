@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.system.SystemOperationLogMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.system.SystemOperationLog" id="SystemOperationLogResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="userId"    column="user_id"    />
+        <result property="operationName"    column="operation_name"    />
+        <result property="url"    column="url"    />
+        <result property="params"    column="params"    />
+        <result property="ip"    column="ip"    />
+    </resultMap>
+
+	<sql id="selectSystemOperationLogVo">
+        SELECT id, create_time, update_time, user_id, operation_name, url, params, ip FROM t_system_operation_log
+    </sql>
+
+    <select id="selectSystemOperationLogList" parameterType="net.airene.questionnaire.common.data.entity.system.SystemOperationLog" resultMap="SystemOperationLogResult">
+        <include refid="selectSystemOperationLogVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="createTime != null "> AND create_time = #{createTime}</if>
+             <if test="updateTime != null "> AND update_time = #{updateTime}</if>
+             <if test="userId != null "> AND user_id = #{userId}</if>
+             <if test="operationName != null  and operationName != '' "> AND operation_name = #{operationName}</if>
+             <if test="url != null  and url != '' "> AND url = #{url}</if>
+             <if test="params != null  and params != '' "> AND params = #{params}</if>
+             <if test="ip != null  and ip != '' "> AND ip = #{ip}</if>
+         </where>
+    </select>
+
+    <select id="getSystemOperationLogById" parameterType="Long" resultMap="SystemOperationLogResult">
+        <include refid="selectSystemOperationLogVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertSystemOperationLog"  parameterType="net.airene.questionnaire.common.data.entity.system.SystemOperationLog">
+        INSERT INTO t_system_operation_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">id,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="userId != null  ">user_id,</if>
+			<if test="operationName != null  and operationName != ''  ">operation_name,</if>
+			<if test="url != null  and url != ''  ">url,</if>
+			<if test="params != null  and params != ''  ">params,</if>
+			<if test="ip != null  and ip != ''  ">ip,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="userId != null  ">#{userId},</if>
+			<if test="operationName != null  and operationName != ''  ">#{operationName},</if>
+			<if test="url != null  and url != ''  ">#{url},</if>
+			<if test="params != null  and params != ''  ">#{params},</if>
+			<if test="ip != null  and ip != ''  ">#{ip},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertSystemOperationLog" parameterType="java.util.List">
+        INSERT INTO t_system_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">id,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="userId != null  ">user_id,</if>
+            <if test="operationName != null  and operationName != ''  ">operation_name,</if>
+            <if test="url != null  and url != ''  ">url,</if>
+            <if test="ip != null  and ip != ''  ">ip,</if>
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  ">#{item.id},</if>
+            <if test="createTime != null  ">#{item.createTime},</if>
+            <if test="updateTime != null  ">#{item.updateTime},</if>
+            <if test="userId != null  ">#{item.userId},</if>
+            <if test="operationName != null  and operationName != ''  ">#{item.operationName},</if>
+            <if test="url != null  and url != ''  ">#{item.url},</if>
+            <if test="params != null  and params != ''  ">#{item.params},</if>
+            <if test="ip != null  and ip != ''  ">#{item.ip},</if>
+        </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateSystemOperationLog" parameterType="net.airene.questionnaire.common.data.entity.system.SystemOperationLog">
+        UPDATE t_system_operation_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="userId != null  ">user_id = #{userId},</if>
+            <if test="operationName != null  and operationName != ''  ">operation_name = #{operationName},</if>
+            <if test="url != null  and url != ''  ">url = #{url},</if>
+            <if test="params != null  and params != ''  ">params = #{params},</if>
+            <if test="ip != null  and ip != ''  "> ip = #{ip},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+	<delete id="deleteSystemOperationLogById" parameterType="Long">
+        DELETE FROM t_system_operation_log WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteSystemOperationLogByIds" parameterType="java.util.List">
+        DELETE FROM t_system_operation_log WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

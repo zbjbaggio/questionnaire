@@ -1,0 +1,33 @@
+package ${classPageName}.${commonPackageName}.data.entity#if(${moduleName} != '').${moduleName}#end;
+
+import lombok.Data;
+import lombok.ToString;
+#foreach ($column in $columns)
+#if($column.attrType == 'Date' && ($column.attrname != 'createBy' && $column.attrname != 'createTime' && $column.attrname != 'updateBy' && $column.attrname != 'updateTime' && $column.attrname != 'remark'))
+    #break
+#end
+#end
+#foreach ($column in $columns)
+#if($column.attrType == 'BigDecimal')
+    #break
+#end
+#end
+
+/**
+ * ${tableComment}表 ${tableName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Data
+@ToString(callSuper = true)
+public class ${className} extends BaseEntity {
+
+#foreach ($column in $columns)
+#if($column.attrname != 'id' && $column.attrname != 'createBy' && $column.attrname != 'createTime' && $column.attrname != 'updateBy' && $column.attrname != 'updateTime' && $column.attrname != 'remark')
+	/** $column.columnComment */
+	private $column.attrType $column.attrname;
+
+#end
+#end
+}

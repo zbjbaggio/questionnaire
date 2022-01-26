@@ -1,0 +1,63 @@
+package ${package}.${controllerPackageName}.controller.advice#if(${moduleName} != '').${moduleName}#end;
+
+import java.util.List;
+import java.util.UUID;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import ${classPageName}.${commonPackageName}.data.entity#if(${moduleName} != '').${moduleName}#end.${className};
+import ${classPageName}.${commonPackageName}.service#if(${moduleName} != '').${moduleName}#end.${className}Service;
+import ${package}.common.controller.BaseController;
+import ${package}.common.data.page.TableDataInfo;
+/**
+ * ${tableComment} 信息操作处理
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@RestController
+@RequestMapping("/${className}")
+@Slf4j
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+public class ${className}Controller extends BaseController {
+
+	private final ${className}Service ${classname}Service;
+
+	/**
+	 * 查询${tableComment}列表
+	 */
+	@GetMapping("/list")
+	public TableDataInfo list(${className} ${classname}) {
+		startPage();
+        List<${className}> list = ${classname}Service.list${className}(${classname});
+		return getDataTable(list);
+	}
+
+	/**
+	 * 新增保存${tableComment}
+	 */
+	@PostMapping("/save")
+	public void save(${className} ${classname}) {
+		${classname}Service.insert${className}(${classname});
+	}
+
+	/**
+	 * 修改${tableComment}
+	 */
+	@GetMapping("/getDetail/{${primaryKey.attrname}}")
+	public ${className} getDetail(@PathVariable("${primaryKey.attrname}") ${primaryKey.attrType} ${primaryKey.attrname}) {
+	    return ${classname}Service.get${className}ById(${primaryKey.attrname});
+	}
+
+	/**
+	 * 删除${tableComment}
+	 */
+	@PostMapping("/delete")
+	public void delete(Long id) {
+		Long[] ids = {id};
+		${classname}Service.delete${className}ByIds(ids);
+	}
+
+}

@@ -1,0 +1,18 @@
+datasource:
+  url: 39.96.117.135:3306/sxtx
+  username: root
+  password: 4zlinkR00t123
+
+nacos:
+  config:
+    server-addr: 39.96.117.135:8848
+    autoRefresh: true
+    data-id: allinone
+    bootstrap:
+      enable: true
+    type: yaml
+mybatis:
+  type-handlers-package: net.airene.questionnaire.common.handler.mybatis
+
+
+

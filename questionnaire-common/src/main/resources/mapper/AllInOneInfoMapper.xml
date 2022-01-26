@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.AllInOneInfoMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.AllInOneInfo" id="AllInOneInfoResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="merchId"    column="merch_id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="publicSecurityInterfaceType"    column="public_security_interface_type"    />
+        <result property="reviewer"    column="reviewer"    />
+        <result property="hotelCode"    column="hotel_code"    />
+        <result property="lvHotelCode"    column="lv_hotel_code"    />
+
+    </resultMap>
+
+    <resultMap type="net.airene.questionnaire.common.data.DTO.AllInOneDTO" id="AllInOneDTOResult" extends="AllInOneInfoResult">
+        <result property="hotelName"    column="hotelName"    />
+    </resultMap>
+
+	<sql id="selectAllInOneInfoVo">
+        SELECT id, create_time, update_time, merch_id, code, name FROM t_all_in_one_info
+    </sql>
+
+    <sql id="selectAllInOneHotelVO">
+        SELECT a.id, a.merch_id, a.code, a.name, b.merch_name hotelName, a.public_security_interface_type FROM t_all_in_one_info a JOIN st_merch b ON a.merch_id = b.merch_id
+    </sql>
+
+    <select id="listAllInOneInfo" parameterType="net.airene.questionnaire.common.data.entity.AllInOneInfo" resultMap="AllInOneInfoResult">
+        <include refid="selectAllInOneInfoVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="createTime != null "> AND create_time = #{createTime}</if>
+             <if test="updateTime != null "> AND update_time = #{updateTime}</if>
+             <if test="merchId != null "> AND merch_id = #{merchId}</if>
+             <if test="code != null and code != '' "> AND code = #{code}</if>
+             <if test="name != null and name != '' "> AND name = #{name}</if>
+         </where>
+    </select>
+
+    <select id="getAllInOneInfoById" parameterType="Long" resultMap="AllInOneInfoResult">
+        <include refid="selectAllInOneInfoVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllInOneInfoByCode" parameterType="String" resultMap="AllInOneDTOResult">
+        <include refid="selectAllInOneHotelVO"/>
+        WHERE a.code = #{code}
+    </select>
+
+    <select id="listAll" resultMap="AllInOneDTOResult">
+        <include refid="selectAllInOneHotelVO"/>
+    </select>
+
+    <select id="getByCode" resultMap="AllInOneDTOResult">
+        SELECT a.id, a.merch_id, a.code, a.name, b.merch_name hotelName, a.reviewer, a.public_security_interface_type, a.hotel_code, a.lv_hotel_code
+        FROM t_all_in_one_info a LEFT JOIN st_merch b ON a.merch_id = b.merch_id
+        WHERE code = #{code}
+    </select>
+
+    <insert id="insertAllInOneInfo" parameterType="net.airene.questionnaire.common.data.entity.AllInOneInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_all_in_one_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="createTime != null ">create_time,</if>
+			<if test="updateTime != null ">update_time,</if>
+			<if test="merchId != null ">merch_id,</if>
+			<if test="code != null and code != '' ">code,</if>
+			<if test="name != null and name != '' ">name,</if>
+			<if test="publicSecurityInterfaceType != null and publicSecurityInterfaceType != '' ">public_security_interface_type,</if>
+			<if test="reviewer != null and reviewer != '' ">reviewer,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="createTime != null ">#{createTime},</if>
+			<if test="updateTime != null ">#{updateTime},</if>
+			<if test="merchId != null ">#{merchId},</if>
+			<if test="code != null and code != '' ">#{code},</if>
+			<if test="name != null and name != '' ">#{name},</if>
+			<if test="publicSecurityInterfaceType != null and publicSecurityInterfaceType != '' ">#{publicSecurityInterfaceType},</if>
+			<if test="reviewer != null and reviewer != '' ">#{reviewer},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertAllInOneInfo" parameterType="java.util.List">
+        INSERT INTO t_all_in_one_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="merchId != null  ">merch_id,</if>
+            <if test="code != null  and code != ''  ">code,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">#{item.createTime},</if>
+            <if test="updateTime != null ">#{item.updateTime},</if>
+            <if test="merchId != null ">#{item.merchId},</if>
+            <if test="code != null and code != '' ">#{item.code},</if>
+            <if test="name != null and name != '' ">#{item.name},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateAllInOneInfo" parameterType="net.airene.questionnaire.common.data.entity.AllInOneInfo">
+        UPDATE t_all_in_one_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="merchId != null ">merch_id = #{merchId},</if>
+            <if test="code != null and code != '' ">code = #{code},</if>
+            <if test="name != null and name != '' ">name = #{name},</if>
+            <if test="publicSecurityInterfaceType != null and publicSecurityInterfaceType != '' ">public_security_interface_type = #{publicSecurityInterfaceType},</if>
+            <if test="reviewer != null and reviewer != '' ">reviewer = #{reviewer},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+	<delete id="deleteAllInOneInfoById" parameterType="Long">
+        DELETE FROM t_all_in_one_info WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteAllInOneInfoByIds" parameterType="java.util.List">
+        DELETE FROM t_all_in_one_info WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

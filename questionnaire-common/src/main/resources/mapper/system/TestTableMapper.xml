@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.system.TestTableMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.system.TestTable" id="TestTableResult">
+        <result property="aaaa"    column="aaaa"    />
+        <result property="a"    column="a"    />
+        <result property="b"    column="b"    />
+    </resultMap>
+
+	<sql id="selectTestTableVo">
+        SELECT aaaa, a, b FROM t_test_table
+    </sql>
+
+    <select id="selectTestTableList" parameterType="net.airene.questionnaire.common.data.entity.system.TestTable" resultMap="TestTableResult">
+        <include refid="selectTestTableVo"/>
+        <where>
+            <if test="aaaa != null "> AND aaaa = #{aaaa}</if>
+             <if test="a != null  and a != '' "> AND a = #{a}</if>
+             <if test="b != null  and b != '' "> AND b = #{b}</if>
+         </where>
+    </select>
+
+    <select id="getTestTableById" parameterType="Integer" resultMap="TestTableResult">
+        <include refid="selectTestTableVo"/>
+        WHERE aaaa = #{aaaa}
+    </select>
+
+    <insert id="insertTestTable"  parameterType="net.airene.questionnaire.common.data.entity.system.TestTable" useGeneratedKeys="true" keyProperty="aaaa">
+        INSERT INTO t_test_table
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="a != null  and a != ''  ">a,</if>
+			<if test="b != null  and b != ''  ">b,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="a != null  and a != ''  ">#{a},</if>
+			<if test="b != null  and b != ''  ">#{b},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertTestTable" parameterType="java.util.List">
+        INSERT INTO t_test_table
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="a != null  and a != ''  ">a,</if>
+            <if test="b != null  and b != ''  ">b,</if>
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="a != null  and a != ''  ">#{item.a},</if>
+            <if test="b != null  and b != ''  ">#{item.b},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateTestTable" parameterType="net.airene.questionnaire.common.data.entity.system.TestTable">
+        UPDATE t_test_table
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="a != null  and a != ''  ">a = #{a},</if>
+            <if test="b != null  and b != ''  ">b = #{b},</if>
+        </trim>
+        WHERE aaaa = #{aaaa}
+    </update>
+
+	<delete id="deleteTestTableById" parameterType="Integer">
+        DELETE FROM t_test_table WHERE aaaa = #{aaaa}
+    </delete>
+
+    <delete id="deleteTestTableByIds" parameterType="java.util.List">
+        DELETE FROM t_test_table WHERE aaaa IN
+        <foreach item="aaaa" collection="array" open="(" separator="," close=")">
+            #{aaaa}
+        </foreach>
+    </delete>
+
+</mapper>

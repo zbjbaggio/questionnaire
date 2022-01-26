@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.AllInOneDataMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.AllInOneData" id="AllInOneDataResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="allInOneId"    column="all_in_one_id"    />
+        <result property="rsvNo"    column="rsv_no"    />
+        <result property="rsvArrDate"    column="rsv_arr_date"    />
+        <result property="rsvDepDate"    column="rsv_dep_date"    />
+        <result property="stayDateCount"    column="stay_date_count"    />
+        <result property="usedTimes"    column="used_times"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="rmType"    column="rm_type"    />
+        <result property="roomNo"    column="room_no"    />
+        <result property="names"    column="names"    />
+        <result property="channelDes"    column="channel_des"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <insert id="insertAllInOneData" parameterType="net.airene.questionnaire.common.data.entity.AllInOneData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_all_in_one_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">create_time,</if>
+            <if test="allInOneId != null ">all_in_one_id,</if>
+            <if test="rsvNo != null and rsvNo != '' ">rsv_no,</if>
+            <if test="rsvArrDate != null  ">rsv_arr_date,</if>
+            <if test="rsvDepDate != null  ">rsv_dep_date,</if>
+            <if test="stayDateCount != null ">stay_date_count,</if>
+            <if test="usedTimes != null  ">used_times,</if>
+            <if test="startTime != null  ">start_time,</if>
+            <if test="rmType != null and rmType != '' ">rm_type,</if>
+            <if test="roomNo != null and roomNo != '' ">room_no,</if>
+            <if test="names != null and names != '' ">names,</if>
+            <if test="channelDes != null and channelDes != '' ">channel_des,</if>
+            <if test="remark != null and remark != '' ">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="allInOneId != null ">#{allInOneId},</if>
+            <if test="rsvNo != null and rsvNo != '' ">#{rsvNo},</if>
+            <if test="rsvArrDate != null ">#{rsvArrDate},</if>
+            <if test="rsvDepDate != null ">#{rsvDepDate},</if>
+            <if test="stayDateCount != null ">#{stayDateCount},</if>
+            <if test="usedTimes != null ">#{usedTimes},</if>
+            <if test="startTime != null ">#{startTime},</if>
+            <if test="rmType != null and rmType != '' ">#{rmType},</if>
+            <if test="roomNo != null and roomNo != '' ">#{roomNo},</if>
+            <if test="names != null and names != '' ">#{names},</if>
+            <if test="channelDes != null and channelDes != '' ">#{channelDes},</if>
+            <if test="remark != null and remark != '' ">#{remark},</if>
+        </trim>
+    </insert>
+
+
+
+</mapper>

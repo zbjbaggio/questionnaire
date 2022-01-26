@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.system.SystemUserMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.system.SystemUser" id="SystemUserResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="phone"    column="phone"    />
+        <result property="realName"    column="real_name"    />
+        <result property="company"    column="company"    />
+        <result property="department"    column="department"    />
+        <result property="password"    column="password"    />
+        <result property="salt"    column="salt"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <resultMap id="UserRoleIdResult" type="net.airene.questionnaire.common.data.VO.system.UserRoleIdVO" extends="SystemUserResult">
+        <result property="roleId"    column="role_id"    />
+    </resultMap>
+
+	<sql id="selectSystemUserVo">
+        SELECT id, create_time, update_time, username, phone, real_name, company, department, password, salt, status FROM t_system_user
+    </sql>
+
+    <select id="selectSystemUserList" parameterType="net.airene.questionnaire.common.data.entity.system.SystemUser" resultMap="SystemUserResult">
+        <include refid="selectSystemUserVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="username != null  and username != '' "> AND username LIKE "%"#{username}"%"</if>
+             <if test="realName != null  and realName != '' "> AND real_name LIKE "%"#{realName}"%"</if>
+             <if test="company != null  and company != '' "> AND company LIKE "%"#{company}"%"</if>
+             <if test="phone != null  and phone != '' "> AND phone LIKE "%"#{phone}"%"</if>
+             <if test="status != null "> AND status = #{status}</if>
+         </where>
+         ORDER BY id DESC
+    </select>
+
+    <select id="selectSystemUserById" parameterType="Long" resultMap="SystemUserResult">
+        <include refid="selectSystemUserVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectSystemUserByIds" parameterType="java.util.Set" resultMap="SystemUserResult">
+        <include refid="selectSystemUserVo"/>
+        WHERE id IN
+        <foreach collection="collection" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getByUsername" resultMap="SystemUserResult" parameterType="String">
+        <include refid="selectSystemUserVo"/>
+        WHERE username = #{username}
+    </select>
+
+    <select id="selectPermissionByUserId" resultType="java.lang.String" parameterType="Long">
+        SELECT distinct c.permission FROM t_system_user_role a
+        JOIN t_system_role_permission b ON a.role_id = b.role_id
+        JOIN t_system_permission c on c.id = b.permission_id
+        JOIN t_system_role d on d.id = a.role_id and d.status = 1
+        WHERE a.user_id= #{userId} and permission IS NOT NULL;
+    </select>
+
+    <select id="checkUserInfoNoStateNoId" resultType="java.lang.Integer">
+        SELECT 1 FROM t_system_user WHERE username = #{username}
+        <if test="id != null  "> AND id != #{id}</if>
+        LIMIT 1
+    </select>
+
+    <select id="selectHasUserList" resultType="net.airene.questionnaire.common.data.entity.system.SystemUser">
+        SELECT a.id, a.username, a.phone, a.company, a.department FROM t_system_user a
+        JOIN t_system_user_role b ON a.id = b.user_id
+        WHERE b.role_id = #{roleId}
+    </select>
+
+    <select id="selectSystemUserAllList" parameterType="net.airene.questionnaire.common.data.DTO.system.UserQueryDTO" resultMap="UserRoleIdResult">
+        SELECT a.id, a.username, a.phone, a.company, a.department, b.role_id, a.status, a.real_name FROM t_system_user a
+        LEFT JOIN t_system_user_role b ON a.id = b.user_id AND b.role_id = #{roleId}
+        <where>
+            <if test="username != null  and username != '' "> AND a.username LIKE "%"#{username}"%"</if>
+            <if test="realName != null  and realName != '' "> AND a.real_name LIKE "%"#{realName}"%"</if>
+            <if test="company != null  and company != '' "> AND a.company LIKE "%"#{company}"%"</if>
+            <if test="phone != null  and phone != '' "> AND a.phone LIKE "%"#{phone}"%"</if>
+            <if test="status != null "> AND a.status = #{status}</if>
+        </where>
+        ORDER BY a.id DESC
+    </select>
+
+    <select id="countSystemUserByIds" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_system_user WHERE id IN
+        <foreach collection="collection" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getLikeUsername" resultType="net.airene.questionnaire.common.data.entity.system.SystemUser">
+        <include refid="selectSystemUserVo"/>
+        WHERE username LIKE "%"#{username}"%"
+    </select>
+
+    <insert id="insertSystemUser" parameterType="net.airene.questionnaire.common.data.entity.system.SystemUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_system_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="username != null  and username != ''  ">username,</if>
+			<if test="password != null  and password != ''  ">password,</if>
+			<if test="phone != null  and phone != ''  ">phone,</if>
+			<if test="realName != null  and realName != ''  ">real_name,</if>
+			<if test="company != null  and company != ''  ">company,</if>
+			<if test="department != null  and department != ''  ">department,</if>
+			<if test="salt != null  and salt != ''  ">salt,</if>
+			<if test="status != null  ">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="username != null  and username != ''  ">#{username},</if>
+			<if test="password != null  and password != ''  ">#{password},</if>
+			<if test="phone != null  and phone != ''  ">#{phone},</if>
+			<if test="realName != null  and realName != ''  ">#{realName},</if>
+			<if test="company != null  and company != ''  ">#{company},</if>
+			<if test="department != null  and department != ''  ">#{department},</if>
+            <if test="salt != null  and salt != ''  ">#{salt},</if>
+			<if test="status != null  ">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemUser" parameterType="net.airene.questionnaire.common.data.entity.system.SystemUser">
+        UPDATE t_system_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null  and username != ''  ">username = #{username},</if>
+            <if test="password != null  and password != ''  ">password = #{password},</if>
+            <if test="phone != null  and phone != ''  ">phone = #{phone},</if>
+            <if test="realName != null  and realName != ''  ">real_name = #{realName},</if>
+            <if test="company != null  and company != ''  ">company = #{company},</if>
+            <if test="department != null  and department != ''  ">department = #{department},</if>
+            <if test="salt != null  and salt != ''  ">salt = #{salt},</if>
+            <if test="status != null  ">status = #{status},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatusById">
+        UPDATE t_system_user SET status = #{status}
+        WHERE id = #{userId}
+    </update>
+
+    <delete id="deleteSystemUserById" parameterType="Long">
+        DELETE FROM t_system_user WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteSystemUserByIds" parameterType="java.util.List">
+        DELETE FROM t_system_user WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

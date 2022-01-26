@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.HotelInfoMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.HotelInfo" id="HotelInfoResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+	<sql id="selectHotelInfoVo">
+        SELECT id, create_time, update_time, code, name FROM t_hotel_info
+    </sql>
+
+    <select id="listHotelInfo" parameterType="net.airene.questionnaire.common.data.entity.HotelInfo" resultMap="HotelInfoResult">
+        <include refid="selectHotelInfoVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="createTime != null "> AND create_time = #{createTime}</if>
+             <if test="updateTime != null "> AND update_time = #{updateTime}</if>
+             <if test="code != null  and code != '' "> AND code = #{code}</if>
+             <if test="name != null  and name != '' "> AND name = #{name}</if>
+         </where>
+    </select>
+
+    <select id="getHotelInfoById" parameterType="Long" resultMap="HotelInfoResult">
+        <include refid="selectHotelInfoVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertHotelInfo" parameterType="net.airene.questionnaire.common.data.entity.HotelInfo" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_hotel_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="code != null  and code != ''  ">code,</if>
+			<if test="name != null  and name != ''  ">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="code != null  and code != ''  ">#{code},</if>
+			<if test="name != null  and name != ''  ">#{name},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertHotelInfo" parameterType="java.util.List">
+        INSERT INTO t_hotel_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null  ">create_time,</if>
+            <if test="updateTime != null  ">update_time,</if>
+            <if test="code != null  and code != ''  ">code,</if>
+            <if test="name != null  and name != ''  ">name,</if>
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null  ">#{item.createTime},</if>
+            <if test="updateTime != null  ">#{item.updateTime},</if>
+            <if test="code != null  and code != ''  ">#{item.code},</if>
+            <if test="name != null  and name != ''  ">#{item.name},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateHotelInfo" parameterType="net.airene.questionnaire.common.data.entity.HotelInfo">
+        UPDATE t_hotel_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="code != null  and code != ''  ">code = #{code},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+	<delete id="deleteHotelInfoById" parameterType="Long">
+        DELETE FROM t_hotel_info WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteHotelInfoByIds" parameterType="java.util.List">
+        DELETE FROM t_hotel_info WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

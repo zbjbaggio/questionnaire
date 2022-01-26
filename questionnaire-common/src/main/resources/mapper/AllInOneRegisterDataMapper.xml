@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.AllInOneRegisterDataMapper">
+
+    <insert id="insertAllInOneRegisterData" parameterType="net.airene.questionnaire.common.data.entity.AllInOneRegisterData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_allinone_registe_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">create_time,</if>
+            <if test="code != null ">code,</if>
+            <if test="allInOneId != null ">all_in_one_id,</if>
+            <if test="merchId != null ">merch_id,</if>
+            <if test="registerDate != null ">register_date,</if>
+            <if test="phone != null ">phone,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="code != null ">#{code},</if>
+            <if test="allInOneId != null ">#{allInOneId},</if>
+            <if test="merchId != null ">#{merchId},</if>
+            <if test="registerDate != null ">#{registerDate},</if>
+            <if test="phone != null and code != '' ">#{phone},</if>
+        </trim>
+    </insert>
+
+
+</mapper>

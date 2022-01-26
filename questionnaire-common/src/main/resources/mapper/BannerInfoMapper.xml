@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.BannerInfoMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.DTO.banner.BannerInfoDTO" id="BannerInfoResult">
+        <result property="type"     column="type"    />
+        <result property="location"  column="location"    />
+        <result property="url"      column="url"    />
+        <result property="sort"     column="sort"    />
+    </resultMap>
+
+    <sql id="selectBannerInfo">
+        SELECT type, location, url, sort FROM t_allinone_banner
+    </sql>
+
+    <select id="getBannerInfo" parameterType="String" resultMap="BannerInfoResult">
+        <include refid="selectBannerInfo"/>
+        WHERE merch_id = #{merchId} and status = 1
+    </select>
+
+</mapper>

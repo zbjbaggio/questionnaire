@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.system.SystemRolePermissionMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.system.SystemRolePermission" id="SystemRolePermissionResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="permissionId"    column="permission_id"    />
+    </resultMap>
+
+	<sql id="selectSystemRolePermissionVo">
+        SELECT id, create_time, update_time, role_id, permission_id FROM t_system_role_permission
+    </sql>
+
+    <select id="selectSystemRolePermissionList" parameterType="net.airene.questionnaire.common.data.entity.system.SystemRolePermission" resultMap="SystemRolePermissionResult">
+        <include refid="selectSystemRolePermissionVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="createTime != null "> AND create_time = #{createTime}</if>
+             <if test="updateTime != null "> AND update_time = #{updateTime}</if>
+             <if test="roleId != null "> AND role_id = #{roleId}</if>
+             <if test="permissionId != null "> AND permission_id = #{permissionId}</if>
+         </where>
+    </select>
+
+    <select id="selectSystemRolePermissionById" parameterType="Long" resultMap="SystemRolePermissionResult">
+        <include refid="selectSystemRolePermissionVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectPermissionIds" resultType="java.lang.Long">
+        SELECT permission_id FROM t_system_role_permission WHERE role_id = #{roleId}
+    </select>
+
+    <insert id="insertSystemRolePermission" parameterType="net.airene.questionnaire.common.data.entity.system.SystemRolePermission">
+        INSERT INTO t_system_role_permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">id,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="roleId != null  ">role_id,</if>
+			<if test="permissionId != null  ">permission_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="roleId != null  ">#{roleId},</if>
+			<if test="permissionId != null  ">#{permissionId},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertSystemRolePermission" parameterType="java.util.List">
+        INSERT INTO t_system_role_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            create_time, role_id, permission_id,
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                #{item.createTime}, #{item.roleId}, #{item.permissionId},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateSystemRolePermission" parameterType="net.airene.questionnaire.common.data.entity.system.SystemRolePermission">
+        UPDATE t_system_role_permission
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="roleId != null  ">role_id = #{roleId},</if>
+            <if test="permissionId != null  ">permission_id = #{permissionId},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+	<delete id="deleteSystemRolePermissionById" parameterType="Long">
+        DELETE FROM t_system_role_permission WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteSystemRolePermissionByIds" parameterType="String">
+        DELETE FROM t_system_role_permission WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSystemRolePermissionByRoleId" parameterType="Long">
+        DELETE FROM t_system_role_permission WHERE role_id = #{roleId}
+    </delete>
+
+
+
+</mapper>

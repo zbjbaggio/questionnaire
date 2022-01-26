@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.airene.questionnaire.common.mapper.system.SystemPermissionMapper">
+
+    <resultMap type="net.airene.questionnaire.common.data.entity.system.SystemPermission" id="SystemPermissionResult">
+        <result property="id"    column="id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="name"    column="name"    />
+        <result property="code"    column="code"    />
+        <result property="icon"    column="icon"    />
+        <result property="type"    column="type"    />
+        <result property="router"    column="router"    />
+        <result property="permission"    column="permission"    />
+    </resultMap>
+
+    <resultMap type="net.airene.questionnaire.common.data.VO.system.PermissionVO" id="PermissionVOResult">
+        <result property="id"    column="id"    />
+        <result property="path"    column="router"    />
+        <result property="type"    column="type"    />
+        <result property="permission"    column="permission"    />
+        <result property="name"    column="name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="icon"    column="icon"    />
+    </resultMap>
+
+	<sql id="selectSystemPermissionVo">
+        SELECT id, create_time, update_time, parent_id, name, code, icon, type, router, permission FROM t_system_permission
+    </sql>
+
+    <select id="selectSystemPermissionList" parameterType="net.airene.questionnaire.common.data.entity.system.SystemPermission" resultMap="SystemPermissionResult">
+        <include refid="selectSystemPermissionVo"/>
+        <where>
+            <if test="id != null "> AND id = #{id}</if>
+             <if test="createTime != null "> AND create_time = #{createTime}</if>
+             <if test="updateTime != null "> AND update_time = #{updateTime}</if>
+             <if test="parentId != null "> AND parent_id = #{parentId}</if>
+             <if test="name != null  and name != '' "> AND name = #{name}</if>
+             <if test="code != null  and code != '' "> AND code = #{code}</if>
+             <if test="icon != null  and icon != '' "> AND icon = #{icon}</if>
+             <if test="type != null "> AND type = #{type}</if>
+         </where>
+    </select>
+
+    <select id="selectSystemPermissionById" parameterType="Long" resultMap="SystemPermissionResult">
+        <include refid="selectSystemPermissionVo"/>
+        WHERE id = #{id}
+    </select>
+
+    <select id="listByUserId" parameterType="Long" resultMap="PermissionVOResult" >
+      SELECT DISTINCT a.id,a.name,a.parent_id,a.type,a.router,a.permission,a.icon
+      FROM t_system_permission a
+      JOIN t_system_role_permission b ON a.id = b.permission_id
+	  JOIN t_system_user_role c ON c.role_id = b.role_id
+	  JOIN t_system_role d on d.id = b.role_id and d.status = 1
+	  WHERE c.user_id = #{userId} ORDER BY code
+    </select>
+
+    <select id="checkId" resultType="java.lang.Integer" parameterType="list">
+        SELECT COUNT(id) FROM t_system_permission WHERE id IN
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="selectSystemPermissionListAll" resultMap="PermissionVOResult">
+        SELECT a.id, a.name, a.parent_id, a.type, a.router, a.permission, a.icon
+        FROM t_system_permission a ORDER BY code
+    </select>
+
+    <select id="selectPermissionByRoleId" parameterType="Long" resultMap="PermissionVOResult">
+        SELECT a.id, a.name, a.parent_id, a.type, a.router, a.permission, a.icon, b.role_id
+        FROM t_system_permission a
+		LEFT JOIN t_system_role_permission b ON a.id = b.permission_id AND b.role_id = #{roleId}
+        ORDER BY a.code;
+    </select>
+
+    <insert id="insertSystemPermission" parameterType="net.airene.questionnaire.common.data.entity.system.SystemPermission" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_system_permission
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">create_time,</if>
+			<if test="updateTime != null  ">update_time,</if>
+			<if test="parentId != null  ">parent_id,</if>
+			<if test="name != null  and name != ''  ">name,</if>
+			<if test="code != null  and code != ''  ">code,</if>
+			<if test="icon != null  and icon != ''  ">icon,</if>
+			<if test="type != null  ">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="updateTime != null  ">#{updateTime},</if>
+			<if test="parentId != null  ">#{parentId},</if>
+			<if test="name != null  and name != ''  ">#{name},</if>
+			<if test="code != null  and code != ''  ">#{code},</if>
+			<if test="icon != null  and icon != ''  ">#{icon},</if>
+			<if test="type != null  ">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSystemPermission" parameterType="net.airene.questionnaire.common.data.entity.system.SystemPermission">
+        UPDATE t_system_permission
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="updateTime != null  ">update_time = #{updateTime},</if>
+            <if test="parentId != null  ">parent_id = #{parentId},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="code != null  and code != ''  ">code = #{code},</if>
+            <if test="icon != null  and icon != ''  ">icon = #{icon},</if>
+            <if test="type != null  ">type = #{type},</if>
+        </trim>
+        WHERE id = #{id}
+    </update>
+
+	<delete id="deleteSystemPermissionById" parameterType="Long">
+        DELETE FROM t_system_permission WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteSystemPermissionByIds" parameterType="String">
+        DELETE FROM t_system_permission WHERE id IN
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

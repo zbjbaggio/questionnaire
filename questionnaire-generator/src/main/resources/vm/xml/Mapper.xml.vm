@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package}.common.mapper#if(${moduleName} != '').${moduleName}#end.${className}Mapper">
+
+    <resultMap type="${package}.common.data.entity#if(${moduleName} != '').${moduleName}#end.${className}" id="${className}Result">
+#foreach ($column in $columns)
+        <result property="${column.attrname}"    column="${column.columnName}"    />
+#end
+    </resultMap>
+
+	<sql id="select${className}Vo">
+        SELECT#foreach($column in $columns) $column.columnName#if($velocityCount != $columns.size()),#end#end FROM ${tableName}
+    </sql>
+
+    <select id="list${className}" parameterType="${package}.common.data.entity#if(${moduleName} != '').${moduleName}#end.${className}" resultMap="${className}Result">
+        <include refid="select${className}Vo"/>
+        <where>
+#foreach($column in $columns)
+            <if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname.trim() != '' #end"> AND $column.columnName = #{$column.attrname}</if>
+ #end
+        </where>
+    </select>
+
+    <select id="get${className}ById" parameterType="${primaryKey.attrType}" resultMap="${className}Result">
+        <include refid="select${className}Vo"/>
+        WHERE ${primaryKey.columnName} = #{${primaryKey.attrname}}
+    </select>
+
+    <insert id="insert${className}"  parameterType="${package}.common.data.entity#if(${moduleName} != '').${moduleName}#end.${className}"#if($primaryKey.extra == 'auto_increment') useGeneratedKeys="true" keyProperty="$primaryKey.attrname"#end>
+        INSERT INTO ${tableName}
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $primaryKey.columnName || $primaryKey.extra != 'auto_increment')
+			<if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname != '' #end ">$column.columnName,</if>
+#end
+#end
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $primaryKey.columnName || $primaryKey.extra != 'auto_increment')
+			<if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname != '' #end ">#{$column.attrname},</if>
+#end
+#end
+         </trim>
+    </insert>
+
+    <insert id="batchInsert${className}" parameterType="java.util.List">
+        INSERT INTO ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $primaryKey.columnName || $primaryKey.extra != 'auto_increment' )
+            <if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname != '' #end ">$column.columnName,</if>
+#end
+#end
+        </trim>
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $primaryKey.columnName || $primaryKey.extra != 'auto_increment')
+            <if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname != '' #end ">#{item.$column.attrname},</if>
+#end
+#end
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="update${className}" parameterType="${package}.common.data.entity#if(${moduleName} != '').${moduleName}#end.${className}">
+        UPDATE ${tableName}
+        <trim prefix="SET" suffixOverrides=",">
+#foreach($column in $columns)
+#if($column.columnName != $primaryKey.columnName)
+            <if test="$column.attrname != null #if($column.attrType == 'String' ) and $column.attrname != '' #end ">$column.columnName = #{$column.attrname},</if>
+#end
+#end
+        </trim>
+        WHERE ${primaryKey.columnName} = #{${primaryKey.attrname}}
+    </update>
+
+	<delete id="delete${className}ById" parameterType="${primaryKey.attrType}">
+        DELETE FROM ${tableName} WHERE ${primaryKey.columnName} = #{${primaryKey.attrname}}
+    </delete>
+
+    <delete id="delete${className}ByIds" parameterType="java.util.List">
+        DELETE FROM ${tableName} WHERE ${primaryKey.columnName} IN
+        <foreach item="${primaryKey.attrname}" collection="array" open="(" separator="," close=")">
+            #{${primaryKey.attrname}}
+        </foreach>
+    </delete>
+
+</mapper>

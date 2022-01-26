@@ -1,0 +1,16 @@
+# 代码生成
+gen:
+  # 作者
+  author: YANQING
+  packageName: net.airene.questionnaire
+  # 公共模块包名
+  commonPackageName: common
+  # controller
+  controllerPackageName: api
+  moduleName:
+  #公共工程名称，不填写则放入当前工程
+  publicProjectModuleName: questionnaire-common
+  # 自动去除表前缀，默认是true
+  autoRemovePrefix: true
+  # 表前缀(类名不会包含表前缀)
+  tablePrefix: t_
